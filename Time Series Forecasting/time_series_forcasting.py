@@ -13,7 +13,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.utils import shuffle
 
 # load the dataset
-data_matrix = pd.read_csv('GlobalTemperatures.csv')[['dt','LandAverageTemperature']].dropna()
+data_matrix = pd.read_csv('GlobalTemperatures.csv')[['dt','LandAverageTemperature']]
 data_matrix.columns = ['Date','Temp']
 data_matrix['Date'] = pd.to_datetime(data_matrix['Date'])
 data_matrix.reset_index(drop=True, inplace=True)
@@ -21,6 +21,15 @@ data_matrix.set_index('Date', inplace=True)
 print(data_matrix.shape)
 data_matrix.head()
 data_matrix.tail()
+
+# mean value
+data_matrix.mean()
+
+# replace missing value with mean value
+data_matrix.fillna(data_matrix.mean(), inplace=True)
+
+# check missing value 
+data_matrix.isnull().sum()
 
 # Data Visiualization
 # Create a time series plot.
@@ -43,8 +52,8 @@ data1=data_matrix.copy()
 data1['year'] = data1.index.year
 
 year_avg = pd.pivot_table(data1, values='Temp', index='year', aggfunc='mean')
-year_avg['10 Years MA'] = year_avg['Temp'].rolling(10).mean()
-year_avg[['Temp','10 Years MA']].plot(figsize=(20,6))
+year_avg['10 Years MA'] = year_avg['Temp'].rolling(5).mean()
+year_avg[['Temp','5 Years MA']].plot(figsize=(20,6))
 plt.title('Yearly Aerage Temperatures')
 plt.xlabel('Months')
 plt.ylabel('Temperature')
