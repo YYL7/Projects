@@ -26,4 +26,4 @@ Finally, we have a dataset we can place in a dataframe, store in a csv, or use i
 
 # Result
 
-The overall average sentiment is 0.354171, meaning there is a positive sentiment towards the restaurant.
+The overall average sentiment was 0.354171, meaning there was a positive sentiment towards the restaurant.
