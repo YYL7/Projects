@@ -41,17 +41,18 @@ len(allComments)   # 222 comments
 # find the average compound sentiment for each review.  
 commentsAndSentiment = []  
 for entry in allComments:
-	  # tokenize the comment to break it into sentences: 
+    # tokenize the comment to break it into sentences: 
     sentences = splitter.tokenize(entry[3]) 
     sentenceCount = len(sentences) 
     sentimentTotal = 0
-		# use the polarity_scores() method to find the positive, negative, and compound scores of each sentence.  
+	
+    # use the polarity_scores() method to find the positive, negative, and compound scores of each sentence.  
     for s in sentences: 
         ss = sid.polarity_scores(s) 
         #print(s, ss) 
 								
-			 # find the average compound sentiment for each review.          
-			 # the sum the compound score as the numerator
+       # find the average compound sentiment for each review.          
+       # the sum the compound score as the numerator
        # the count of sentences as the denominator
         compound = ss['compound'] 
         positive = ss['pos'] 
@@ -70,7 +71,6 @@ commentFrame = pd.DataFrame(commentsAndSentiment, columns=['author', 'stars', 'd
 
 # output to file (define the path and file name) 
 commentFrame.to_csv(r'yelp_reviews.csv') 
-
 
 #cast date column to datetime datatype and set it as the index 
 commentFrame['date'] = pd.to_datetime(commentFrame['date'], errors='coerce')  
