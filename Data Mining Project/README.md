@@ -9,6 +9,9 @@ The original data set contains 101766 instances with 50 features.
 
 2.1 Feature Correlation 
 
+We droped the entire columns of features when they have more than half of the records missing. 
+
+Features that have too many (more than 95%) same value are considered  not informative, so we drop them as well. 
 
 2.2 Missing Values 
 
@@ -16,7 +19,7 @@ We remove the instances with feature “race” == ‘?’ or “gender” == �
 
 After performing the above operation, we were left with 69667 instances with 21 features for further analysis. 
 
-2.3.3 Other Processing Steps 
+2.3 Other Processing Steps 
 
 Converted to binary values (0 and 1): “readmitted”, “diabetesMed”, “change”, “glipizide”, “metformin”, “A1Cresult”, “gender” 
 
@@ -24,10 +27,42 @@ Replaced by numerical values： “ages”
 
 For “diag_1”, we sort the column to nine different groups includes: Circulatory,  Injury, Respiratory, Digestive, Diabetes, Musculoskeletal, Genitourinary, Neoplasms and Others(groups less than 3.5% of instances) by using icd9 codes. 
 
+Lables: Total number of 0 instance: 63500; Total number of 1 instance: 6167 
+
 # 3. Algorithms
 
+3.1 KNN
+
+3.1.1 Neighbor Selection
+
+We look for the best k neighbor value from odd numbers in the range of (1, 100). The judgement is based on the recall score of label 1, because the label 1 occupies one tenth of the whole dataset, which means more predicted values are label 0 rather than label 1. The recall score of label 1 could precisely show the effectiveness of this model, compared to that of label 0.  
+
+3.1.2 Features Selection
+
+For KNN model, Our team prefer to choose filter method, which is based on Pearson Correlation Coefficient,  to select features used. We rank the most related features. Due to the incredible amount of data, our team decide to select at most 20 features to run the model. The training data starts from only one feature that is the top one from the rank. Then adding one features every time, the model shows rates including accurate rate, recall score rate with label 1 and 0, precision rate and f1 scores. 
+
+The recall score of label 1 is 0.5427118528745769. The recall score of label 0 is 0.595380947004105. The accuracy is 0.5725093969721744. 
+
+3.2 SVM
+
+The maximum recall for TP(1) is achieved when the model includes top 10 features among the rank. 
+
+3.3 Logistic Regression
+
+We use feature selection based on PCC to rank the features’ correlation to the features and collect the best features to make the future prediction.
+
+The overall precision and recall scores were decent but not great. A 61% recall means that the model was only able to recall 61% of all the right answers and a 62% precision shows that the model needed to take many guesses before it can get to the right answers.  
+
+3.4 Random Forests
+
+For the RF model, all values are treated as categorical data. For numerical features that having too many level (“num_lab_procedures” and “num_medications”), we sorted the data that values from 0 to 10 as category ‘10’, data value from 11 to 20 as category ‘20’ etc. so that all features have less than 15 levels.  
+
+Since the data set is highly unbalanced,  simply compute the overall accuracy won’t tell us whether our model is decent or not, so we decide to use recall score for both TP (1) and TN(0) for model evaluation.
+
+ The maximum recall for TP(1) is achieved when the model includes top 16 features among the rank. 
 
 # 4. Result
+
 For this project, we created four testing models, including KNN, SVM, Random Forest and tested them on two processed data sets, each of which underwent a different imputation method. For our optimal model we chose Random Forest which provided the highest recall score. Logistic Regression also came pretty close to the optimal model in terms of accuracy.  
  
 
