@@ -17,8 +17,8 @@ From the time series plot among the actual values, we can see that the plot fluc
 
 From the plot of Yearly Average Temperatures. we can also see that the yearly average temperatures flucuate by periods and then actually increase by years. 
 
-# Algorithm
-Utilized Keras in Python to build LSTM model, a special kind of RNN, capable of learning long-term dependencies. Before we difine the LSTM model, we should prepare the dataset for the time series LSTM model.
+# Data Preprocessing 
+Before we difine the LSTM model, we should prepare the dataset for the time series LSTM model.
 
 Firstly, I splitted the data into training data with 70% of the data, and testing data with 30% of the data;
 
@@ -26,6 +26,7 @@ Secondly, I scaled the average temperature from 0 to 1, which should be inversed
 
 Lastly, I reshaped the training data and testing data by size of looking back, from which we could predict the current temperature by looking back how many years we difined. And for this dataset, I decided to set the size of looking back as 60 months, or 5 years.
 
+# Algorithm
 After prepared the dataset, I used Keras in Python to build one-layer LSTM model with epco of 100. 
 
 # Result
