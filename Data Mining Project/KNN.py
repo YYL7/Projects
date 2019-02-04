@@ -1,7 +1,17 @@
+# import pakage
 import numpy as np
 import pandas as pd
 import math 
 import heapq
+import matplotlib.pyplot as plt
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from scipy import stats
+from sklearn.utils import resample
+from sklearn.metrics import classification_report
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -172,7 +182,6 @@ df = df.join(one_hot_5)
 df = df.drop('diag_1',axis = 1)
 
 
-
 df['age'] = normCol('age')
 df['time_in_hospital'] = normCol('time_in_hospital')
 df['num_lab_procedures'] = normCol('num_lab_procedures')
@@ -188,14 +197,6 @@ df = df.reset_index(drop=True)
 print('total number of class 0 instances', df['readmitted'].value_counts()[0])
 print('total number of class 1 instances', df['readmitted'].value_counts()[1])
 
-#******************************__KNN__*****************************  
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-from scipy import stats
-from sklearn.utils import resample
-from sklearn.metrics import classification_report
 
 def PCC(x,y): 
     sum_sq_x = 0
@@ -223,7 +224,7 @@ def PCC(x,y):
     
     return correlation
 
-##imbalanced data copy 1/0
+# imbalanced data copy 1/0
 def resampletrain(df):
     df_majority = df[df.readmitted==0]
     df_minority = df[df.readmitted==1]
@@ -234,7 +235,7 @@ def resampletrain(df):
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
     return df_upsampled
 
-#PCC
+# PCC
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
 abspcc = []
@@ -253,6 +254,8 @@ acc = []
 trainpos = []
 trainneg = []
 
+
+#******************************__KNN__*****************************  
 #test KNN parameter-neighbors
 for n_neighbors in range(1,50,2):#get first related 20 features
 #    select = result['features'][0:i].tolist() + ['readmitted']
@@ -346,8 +349,6 @@ for i in range(1,20):#get first related 20 features
 print(confusion_matrix(y_test,y_pred))  
 print(classification_report(y_test,y_pred))
 
-import matplotlib.pyplot as plt
-
 x = list(range(1,20))
 plt.plot(x,pos,'-g',label='test recall for TP')
 plt.plot(x,trainpos,'-y',label='train recall for TP')
@@ -358,8 +359,7 @@ plt.legend(loc='lower right')
 plt.axis([1,20, 0, 1])
 
 plt.xticks(np.arange(min(x), max(x)+1, 1.0))
-
-plt.show();
+plt.show()
 
 #Test KNN accuracy and recall score
 #top 12 features and k neighbors equal to 53
@@ -405,3 +405,113 @@ trainneg.append(trainnegsum)
 print('recall_socre_label_1:',pos[11])
 print('recall_socre_label_0:',pos[11])
 print('feature_selections:\n',result.iloc[:12,0])
+
+
+#******************************__SVM__*****************************  
+for i in [3,5,8,10,15]:
+    select = result['features'][0:i].tolist() + ['readmitted']
+    DF = df[select]
+    kf = KFold(n_splits=10) 
+    kf.get_n_splits(DF)
+    accsum = 0
+    posum = 0
+    negsum = 0
+    trainposum = 0
+    trainnegsum = 0
+    for train_index, test_index in kf.split(DF):
+        train, test = DF.iloc[train_index], DF.iloc[test_index]
+        x_train = train.drop('readmitted',axis=1)
+        y_train = train['readmitted']
+        x_test = test.drop('readmitted',axis=1)
+        y_test = test['readmitted']
+        model = SVC(kernel ='linear',class_weight='balanced',max_iter=-1)
+        model.fit(x_train,y_train)
+        y_pred = model.predict(x_test)
+        y_train_pred = model.predict(x_train)
+        trainposum += recall_score(y_train, y_train_pred,pos_label=1)
+        trainnegsum += recall_score(y_train, y_train_pred,pos_label=0)
+        accsum += accuracy_score(y_test, y_pred) 
+        posum += recall_score(y_test, y_pred,pos_label=1)
+        negsum += recall_score(y_test, y_pred,pos_label=0)
+        print(posum)
+    accsum /= 10
+    posum /= 10
+    negsum /= 10
+    trainposum /= 10
+    trainnegsum /= 10
+    acc.append(accsum)
+    pos.append(posum)
+    neg.append(negsum)
+    trainpos.append(trainposum)
+    trainneg.append(trainnegsum)
+
+
+x = [3,5,8,10,15]
+
+plt.plot(x,pos,'-g',label='test recall for TP')
+plt.plot(x,trainpos,'-y',label='train recall for TP')
+plt.plot(x,neg,'-b',label='test recall for TN')
+plt.plot(x,trainneg,label='train recall for TN')
+plt.plot(x,acc,'-r',label='testing acc')
+plt.legend(loc='lower right')
+plt.axis([1,16 , 0, 1])
+plt.xticks(np.arange(min(x), max(x)+1, 1.0))
+plt.show()
+
+
+#******************************__Logistic Regression__*****************************  
+for i in range(1,len(result)):
+    select = result['features'][0:i].tolist() + ['readmitted']
+    DF = df[select]
+#    
+#    kkk = featuresPcc[:i]
+#    select = x.iloc[:,kkk].columns.values.tolist() + ['readmitted']
+#    DF = df[select]
+    kf = KFold(n_splits=10) 
+    kf.get_n_splits(DF)
+    accsum = 0
+    posum = 0
+    negsum = 0
+    trainposum = 0
+    trainnegsum = 0
+    for train_index, test_index in kf.split(DF):
+        train, test = DF.iloc[train_index], DF.iloc[test_index]
+        x_test = test.drop('readmitted',axis=1)
+        y_test = test['readmitted']
+        x_train = train.drop('readmitted',axis=1)
+        y_train = train['readmitted']
+        logR = LogisticRegression(penalty='l1', solver='liblinear', class_weight="balanced", warm_start=True, random_state=0, n_jobs=-1)
+        logR.fit(x_train, y_train)
+        logR.score(x_test, y_test)
+        y_pred = logR.predict(x_test)
+        y_train_pred = logR.predict(x_train)
+        trainposum += recall_score(y_train, y_train_pred,pos_label=1)
+        trainnegsum += recall_score(y_train, y_train_pred,pos_label=0)
+        accsum += accuracy_score(y_test, y_pred) 
+        posum += recall_score(y_test, y_pred,pos_label=1)
+        negsum += recall_score(y_test, y_pred,pos_label=0)
+        print((posum,negsum))
+    accsum /= 10
+    posum /= 10
+    negsum /= 10
+    trainposum /= 10
+    trainnegsum /= 10
+    acc.append(accsum)
+    pos.append(posum)
+    neg.append(negsum)
+    trainpos.append(trainposum)
+    trainneg.append(trainnegsum)
+
+# plot
+x = list(range(1,len(result)))
+plt.plot(x,pos,'-g',label='test recall for TP')
+plt.plot(x,trainpos,'-y',label='train recall for TP')
+plt.plot(x,neg,'-b',label='test recall for TN')
+plt.plot(x,trainneg,label='train recall for TN')
+plt.plot(x,acc,'-r',label='testing acc')
+plt.legend(loc='lower right')
+plt.axis([1,10 , 0, 1])
+plt.xticks(np.arange(min(x), max(x)+1, 1.0))
+value_counts()
+plt.show()
+
