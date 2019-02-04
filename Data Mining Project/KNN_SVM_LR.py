@@ -24,7 +24,8 @@ def normCol(col):
     newcolumn = (df[col] - mean) / sd
     return newcolumn
 
-df = pd.read_csv(r"C:\Users\yinyaling\Desktop\DM\diabetic_data.csv")
+# load the data
+df = pd.read_csv("diabetic_data.csv")
 df.drop(['encounter_id','payer_code','weight','diag_2','diag_3','medical_specialty'], axis=1, inplace=True)
 for i in df.columns:
 	if df[i].value_counts().max() > 91000:
@@ -44,6 +45,7 @@ for index, row in df.iterrows():
 df = df.drop(removeL,axis=0)
 df = df.drop('patient_nbr',axis=1)
 
+# Converted to binary values (0 and 1)
 df['readmitted'] = np.where(df['readmitted'] == '<30',1,0)
 df['diabetesMed'] = np.where(df['diabetesMed'] == 'Yes',1,0)
 df['change'] = np.where(df['change'] == 'Ch',1,0)
@@ -53,6 +55,7 @@ df['A1Cresult'] = np.where(df['A1Cresult'] == 'None',0,1)
 df['gender'] = np.where(df['gender'] == 'Male',1,0)
 #df['race'] = np.where(df['race'] == 'Caucasian',1,0)
 
+# age: replaced by numerical values from 5 to 95, adding by 10
 df['age'].replace('[0-10)',5,inplace=True)
 df['age'].replace('[10-20)',15,inplace=True)
 df['age'].replace('[20-30)',25,inplace=True)
@@ -64,6 +67,7 @@ df['age'].replace('[70-80)',75,inplace=True)
 df['age'].replace('[80-90)',85,inplace=True)
 df['age'].replace('[90-100)',95,inplace=True)
 
+# admission_type_id: replaced by numerical values from 1 to 8,, adding by 1
 df['admission_type_id'].replace(1,'ad_type_emergency',inplace=True)
 df['admission_type_id'].replace(2,'ad_type_urgent',inplace=True)
 df['admission_type_id'].replace(3,'ad_type_elective',inplace=True)
@@ -76,6 +80,7 @@ one_hot = pd.get_dummies(df['admission_type_id'])
 df = df.join(one_hot)
 df = df.drop('admission_type_id',axis = 1)
 
+# discharge_disposition_id
 l_ddi = list(range(7,30))
 l_ddi += [2,4,5]
 for i in l_ddi:
@@ -87,6 +92,7 @@ one_hot_2 = pd.get_dummies(df['discharge_disposition_id'])
 df = df.join(one_hot_2)
 df = df.drop('discharge_disposition_id',axis = 1)
 
+# admission_source_id
 l_asi = list(range(2,7)) + list(range(8,27))
 for i in l_asi:
 	df['admission_source_id'].replace(i,'a_s_other',inplace=True)
@@ -96,7 +102,7 @@ one_hot_3 = pd.get_dummies(df['admission_source_id'])
 df = df.join(one_hot_3)
 df = df.drop('admission_source_id',axis = 1)
 
-
+# insulin
 df['insulin'].replace('No','insulin_No',inplace=True)
 df['insulin'].replace('Up','insulin_Up',inplace=True)
 df['insulin'].replace('Down','insulin_Down',inplace=True)
@@ -105,6 +111,7 @@ one_hot_1 = pd.get_dummies(df['insulin'])
 df = df.join(one_hot_1)
 df = df.drop('insulin',axis = 1)
 
+# race
 df['race'].replace('Hispanic','race_other',inplace=True)
 df['race'].replace('Asian','race_other',inplace=True)
 df['race'].replace('Other','race_other',inplace=True)
@@ -197,7 +204,7 @@ df = df.reset_index(drop=True)
 print('total number of class 0 instances', df['readmitted'].value_counts()[0])
 print('total number of class 1 instances', df['readmitted'].value_counts()[1])
 
-
+# PCC
 def PCC(x,y): 
     sum_sq_x = 0
     sum_sq_y = 0 
