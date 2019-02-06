@@ -255,14 +255,14 @@ for i in train.columns:
     result = result.sort_values(['|r|'] , ascending=0)
 print(result)
 
+
+#******************************__KNN__*****************************  
 pos = []
 neg = []
 acc = []
 trainpos = []
 trainneg = []
 
-
-#******************************__KNN__*****************************  
 #test KNN parameter-neighbors
 for n_neighbors in range(1,50,2):#get first related 20 features
 #    select = result['features'][0:i].tolist() + ['readmitted']
@@ -364,6 +364,7 @@ plt.plot(x,trainneg,label='train recall for TN')
 plt.plot(x,acc,'-r',label='testing acc')
 plt.legend(loc='lower right')
 plt.axis([1,20, 0, 1])
+plt.title('KNN')
 
 plt.xticks(np.arange(min(x), max(x)+1, 1.0))
 plt.show()
@@ -409,12 +410,18 @@ neg.append(negsum)
 trainpos.append(trainposum)
 trainneg.append(trainnegsum)
 
-print('recall_socre_label_1:',pos[11])
-print('recall_socre_label_0:',pos[11])
+print('KNN_recall_socre_label_1:',pos[11])
+print('KNN_recall_socre_label_0:',pos[11])
 print('feature_selections:\n',result.iloc[:12,0])
 
 
 #******************************__SVM__*****************************  
+pos = []
+neg = []
+acc = []
+trainpos = []
+trainneg = []
+
 for i in [3,5,8,10,15]:
     select = result['features'][0:i].tolist() + ['readmitted']
     DF = df[select]
@@ -462,11 +469,19 @@ plt.plot(x,trainneg,label='train recall for TN')
 plt.plot(x,acc,'-r',label='testing acc')
 plt.legend(loc='lower right')
 plt.axis([1,16 , 0, 1])
+plt.title('SVM')
+
 plt.xticks(np.arange(min(x), max(x)+1, 1.0))
 plt.show()
 
 
-#******************************__Logistic Regression__*****************************  
+#******************************__Logistic Regression__***************************** 
+pos = []
+neg = []
+acc = []
+trainpos = []
+trainneg = []
+
 for i in range(1,len(result)):
     select = result['features'][0:i].tolist() + ['readmitted']
     DF = df[select]
@@ -518,6 +533,8 @@ plt.plot(x,trainneg,label='train recall for TN')
 plt.plot(x,acc,'-r',label='testing acc')
 plt.legend(loc='lower right')
 plt.axis([1,10 , 0, 1])
+plt.title('Logistic Regression')
+
 plt.xticks(np.arange(min(x), max(x)+1, 1.0))
 value_counts()
 plt.show()
