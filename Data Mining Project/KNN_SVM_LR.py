@@ -242,6 +242,8 @@ def resampletrain(df):
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
     return df_upsampled
 
+
+#******************************__KNN__*****************************  
 # PCC
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
@@ -255,8 +257,6 @@ for i in train.columns:
     result = result.sort_values(['|r|'] , ascending=0)
 print(result)
 
-
-#******************************__KNN__*****************************  
 pos = []
 neg = []
 acc = []
@@ -416,6 +416,19 @@ print('feature_selections:\n',result.iloc[:12,0])
 
 
 #******************************__SVM__*****************************  
+# PCC
+label = df['readmitted'].copy()
+train = df.drop('readmitted',axis = 1)
+abspcc = []
+features = []
+for i in train.columns:
+    r = PCC(df[i].values,label.values)
+    abspcc.append(abs(r))
+    features.append(i)
+    result = pd.DataFrame({'features':features, '|r|':abspcc})
+    result = result.sort_values(['|r|'] , ascending=0)
+print(result)
+
 pos = []
 neg = []
 acc = []
@@ -476,6 +489,19 @@ plt.show()
 
 
 #******************************__Logistic Regression__***************************** 
+# PCC
+label = df['readmitted'].copy()
+train = df.drop('readmitted',axis = 1)
+abspcc = []
+features = []
+for i in train.columns:
+    r = PCC(df[i].values,label.values)
+    abspcc.append(abs(r))
+    features.append(i)
+    result = pd.DataFrame({'features':features, '|r|':abspcc})
+    result = result.sort_values(['|r|'] , ascending=0)
+print(result)
+
 pos = []
 neg = []
 acc = []
