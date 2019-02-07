@@ -17,8 +17,6 @@ Features that have too many (more than 95%) same value are considered  not infor
 
 We remove the instances with feature “race” == ‘?’ or “gender” == ‘Unknown/ Invalid’ since they only contain a small part (less than 2%) of the entire data set. 
 
-After performing the above operation, we were left with 69667 instances with 21 features for further analysis. 
-
 2.3 Other Processing Steps 
 
 Converted to binary values (0 and 1): “readmitted”, “diabetesMed”, “change”, “glipizide”, “metformin”, “A1Cresult”, “gender” 
@@ -27,7 +25,11 @@ Replaced by numerical values： “ages”
 
 For “diag_1”, we sort the column to nine different groups includes: Circulatory,  Injury, Respiratory, Digestive, Diabetes, Musculoskeletal, Genitourinary, Neoplasms and Others(groups less than 3.5% of instances) by using icd9 codes. 
 
-Lables: Total number of 0 instance: 63500; Total number of 1 instance: 6167 
+2.4 Data Summary
+
+After performing the above operation, we were left with 69667 instances with 21 features for further analysis. 
+
+Lables: Total number of lable 0 instance: 63500; Total number of lable 1 instance: 6167.
 
 # 3. Algorithms
 
@@ -53,16 +55,8 @@ We use feature selection based on PCC to rank the features’ correlation to the
 
 The overall precision and recall scores were decent but not great. A 61% recall means that the model was only able to recall 61% of all the right answers and a 62% precision shows that the model needed to take many guesses before it can get to the right answers.  
 
-3.4 Random Forests
-
-For the RF model, all values are treated as categorical data. For numerical features that having too many level (“num_lab_procedures” and “num_medications”), we sorted the data that values from 0 to 10 as category ‘10’, data value from 11 to 20 as category ‘20’ etc. so that all features have less than 15 levels.  
-
-Since the data set is highly unbalanced,  simply compute the overall accuracy won’t tell us whether our model is decent or not, so we decide to use recall score for both TP (1) and TN(0) for model evaluation.
-
- The maximum recall for TP(1) is achieved when the model includes top 16 features among the rank. 
-
 # 4. Result
 
-For this project, we created four testing models, including KNN, SVM, Random Forest and tested them on two processed data sets, each of which underwent a different imputation method. For our optimal model we chose Random Forest which provided the highest recall score. Logistic Regression also came pretty close to the optimal model in terms of accuracy.  
+For this project, we created three testing models, including KNN, SVM and Logistic Regression. Logistic Regression was the optimal model with overall recall score of 0.61, representing that the model was able to recall 61% of all the right answers.
  
 
