@@ -31,6 +31,10 @@ After performing the above operation, we were left with 69667 instances with 21 
 
 Lables: Total number of lable 0 instance: 63500; Total number of lable 1 instance: 6167.
 
+Lable 1: Readimited within 30 days.
+
+Lable 0: Not get readmitted within 30 days or get readmitted after 30 days.
+
 # 3. Algorithms
 
 3.1 KNN
