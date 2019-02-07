@@ -53,9 +53,9 @@ The maximum recall for TP(1) is achieved when the model includes top 10 features
 
 We use feature selection based on PCC to rank the features’ correlation to the features and collect the best features to make the future prediction.
 
-The overall precision and recall scores were decent but not great. A 61% recall means that the model was only able to recall 61% of all the right answers and a 62% precision shows that the model needed to take many guesses before it can get to the right answers.  
+The overall precision and recall scores were decent but not great. A 61% recall means that the model was able to recall 61% of all the right answers and a 62% precision shows that the model needed to take many guesses before it can get to the right answers.  
 
-# 4. Result
+# 4. Conclusion and Future Work 
 
 For this project, we created three models, including KNN, SVM and Logistic Regression. The Logistic Regression model was considered to be the best model in regard of running time performance and prediction result with overall recall score of 0.61, representing that the model was able to recall 61% of all the right answers. In the future, we would like to try ensemble models or Ada-boosting in order to get more stable results and a new way of balancing the data such as bagging. 
 
