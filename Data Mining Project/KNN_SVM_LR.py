@@ -46,8 +46,13 @@ df = df.drop(removeL,axis=0)
 df = df.drop('patient_nbr',axis=1)
 
 # Converted to binary values (0 and 1)
-df['readmitted'] = np.where(df['readmitted'] == '<30',1,0)
-df['diabetesMed'] = np.where(df['diabetesMed'] == 'Yes',1,0)
+# lable - 'readmitted'
+# assign 1 to 'readmitted' if less than 30; assign 0 to 'readmitted' if else.
+# lable 1 - Readimited within 30 days
+# lable 0 - Not get readmitted within 30 days or get readmitted after 30 days.
+df['readmitted'] = np.where(df['readmitted'] == '<30',1,0)   
+# assign 1 to 'diabetesMed' if Yes
+df['diabetesMed'] = np.where(df['diabetesMed'] == 'Yes',1,0)   
 df['change'] = np.where(df['change'] == 'Ch',1,0)
 df['glipizide'] = np.where(df['glipizide'] == 'No',0,1)
 df['metformin'] = np.where(df['metformin'] == 'No',0,1)
