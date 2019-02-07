@@ -57,6 +57,5 @@ The overall precision and recall scores were decent but not great. A 61% recall 
 
 # 4. Result
 
-For this project, we created three testing models, including KNN, SVM and Logistic Regression. Logistic Regression was the optimal model with overall recall score of 0.61, representing that the model was able to recall 61% of all the right answers.
- 
+For this project, we created three models, including KNN, SVM and Logistic Regression. The Logistic Regression model was considered to be the best model in regard of running time performance and prediction result with overall recall score of 0.61, representing that the model was able to recall 61% of all the right answers. In the future, we would like to try ensemble models or Ada-boosting in order to get more stable results and a new way of balancing the data such as bagging. 
 
