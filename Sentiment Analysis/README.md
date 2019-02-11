@@ -26,4 +26,4 @@ Finally, we have a dataset we can place in a dataframe, store in a csv, or use i
 
 # Result
 
-The overall average sentiment was 0.354171, meaning there was a positive sentiment towards the restaurant.
+The overall average sentiment from the comments, was 0.354171, meaning there was a positive sentiment towards the restaurant. And from the yelp page, we had overall 4.0 stars for the restaurant. As a result, both the sentiment analysis and the stars value told us that the restaurant could be a good choice.
