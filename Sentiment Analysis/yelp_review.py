@@ -9,17 +9,22 @@ import matplotlib.pyplot as plt
 splitter = data.load('tokenizers/punkt/english.pickle')
 sid = SentimentIntensityAnalyzer()
 
+# the restaurant name: Jazz Standard
+# the yelp page of the restaurant: https://www.yelp.com/biz/jazz-standard-new-york
+
 #Gather comments from all yelp pages 
 allComments = [] 
 start = 1 
-while start < 13:
+while start < 13: # the overall page we have right now is 12
 	urlString = r'https://www.yelp.com/biz/jazz-standard-new-york?start= '
 	urlString =urlString[:-1] + str((start-1)*20)     
 	url = urlopen(urlString) 
-		
+	
+	# using beautiful soup to read the link and find the infomation
 	soup = BeautifulSoup(url, 'html.parser')     
 	reviewList = soup.find_all(itemprop='review')  
        
+        # find infomation we need
 	for review in reviewList:         
 		author = review.find(itemprop='author')['content']         
 		stars = review.find(itemprop='ratingValue')['content']         
