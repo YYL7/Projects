@@ -2,16 +2,16 @@
 
 # 1. Introduction
 
-This Data Mining project will be using dataset from the UCI machine learn- ing lab, representing 10 years (1999-2008) of clinical care at 130 US hospitals and integrated delivery networks. The data contains 50+ attributes such as race, gender, age, HbA1c test result, diabetic medications, etc. Our task is to predict, as accurately as possible, whether a person will be readmitted within 30 days after being discharged from the hospital.
+This Data Mining project will be using dataset from the UCI machine learning lab, representing 10 years (1999-2008) of clinical care at 130 US hospitals and integrated delivery networks. The data contains 50 attributes such as race, gender, age, HbA1c test result, diabetic medications, etc. Our task is to predict, as accurately as possible, whether a person will be readmitted within 30 days after being discharged from the hospital.
 
 # 2. Data Preprocessing 
-The original data set contains 101766 instances with 50 features.
+The original data set contains 101,766 instances with 50 features.
 
 2.1 Feature Correlation 
 
-We droped the entire columns of features when they have more than half of the records missing. 
+We droped the entire columns of features where they have more than half of the records missing. 
 
-Features that have too many (more than 95%) same value are considered  not informative, so we drop them as well. 
+Features that have too many (more than 95%) same value are considered not informative, so we drop them as well. 
 
 2.2 Missing Values 
 
@@ -27,9 +27,9 @@ For “diag_1”, we sort the column to nine different groups includes: Circulat
 
 2.4 Data Summary
 
-After performing the above operation, we were left with 69667 instances with 21 features for further analysis. 
+After performing the above operation, we were left with 69,667 instances with 21 features for further analysis. 
 
-Lables: Total number of lable 0 instance: 63500; Total number of lable 1 instance: 6167.
+Lables: Total number of lable 0 instance: 63,500; Total number of lable 1 instance: 6,167.
 
 Lable 1: Readimited within 30 days.
 
