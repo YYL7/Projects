@@ -10,7 +10,7 @@ The goal for this project is to use sentiment analysis with NLTK to quantify the
 
 # Data Summary
 
-I uesd Beautiful Soup package in Python to grab related data from the restaurant’s Yelp page, including author, ratingValue, datePublished, description. And we had 222 instances at all. Later, I will do the sentiment analysis with the descriptions from each customers.  
+I uesd Beautiful Soup package in Python to grab data of the customers' comments from the restaurant’s Yelp page, including author, ratingValue, datePublished, description. As result, we collected 222 instances at all. Later, I will do the sentiment analysis with the descriptions from each customer.  
 
 # Algorithm
 
@@ -20,7 +20,7 @@ Firstly, I used tokenize to break the comment into sentences for each customers.
 
 Secondly, I used the polarity_scores() method to find the positive, negative, neutral and compound scores of each sentence. 
 
-Thirdly, we wanted to find the average compound sentiment for each review. To do this, we could find the sum the compound score as the numerator and the count of sentences as the denominator.
+Thirdly, we wanted to find the average compound sentiment for each review. To do this, we could find the sum of the compound score as the numerator and the count of sentences as the denominator.
 
 Finally, we have a dataset we can place in a dataframe, store in a csv, or use in further analysis. The datafile have 5 columns, including author, ratingValue, datePublished, description and average compound sentiment score, with 222 instances.
 
