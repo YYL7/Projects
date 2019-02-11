@@ -6,12 +6,12 @@ Time Series is a sequence of well-defined data points measured at consistent tim
 
 Time Series Forecasting is the use of a model to predict future values based on previously observed values.
 
-LSTM (Long short-term memory), LSTM’s), a special kind of RNN, capable of learning long-term dependencies. We can use Keras pakage in python to do Time Series Prediction with LSTM Recurrent Neural Networks.
+LSTM (Long short-term memory), a special kind of RNN, capable of learning long-term dependencies. We can use Keras pakage in python to do Time Series Prediction with LSTM Recurrent Neural Networks.
 
 The goal is to explore and predict the global land average temperature by time series forecasting with LSTM model.
 
 # Data Summary
-Used dataset from the Berkeley Earth Surface Temperature Study, combining temperature reports by each month since the year of 1750. Originally, we have 3129 instances with missing value, which were replaced by the mean value (8.37). 
+Used dataset from the Berkeley Earth Surface Temperature Study, combining temperature reports by each month since the year of 1750. Originally, we have 3,129 instances with missing value, which later were replaced by the mean value of 8.37. 
 
 From the time series plot among the actual values, we can see that the plot flucuate and then become stable. It seemed that the world get warmer cause we barely have any extreme temperatures but stable temperatures. 
 
@@ -24,7 +24,7 @@ Firstly, I splitted the data into training data with 70% of the data, and testin
 
 Secondly, I scaled the average temperature from 0 to 1, which should be inversed back after building the modle cause we need to calculate the RMSE;
 
-Lastly, I reshaped the training data and testing data by size of looking back, from which we could predict the current temperature by looking back how many years we difined. And for this dataset, I decided to set the size of looking back as 60 months, or 5 years.
+Lastly, I reshaped the training data and testing data by size of looking back, from which we could predict the current temperature by looking back how many periods we difined. And for this dataset, I decided to set the size of looking back as 60 months, or 5 years.
 
 # Algorithm
 After prepared the dataset, I used Keras in Python to build one-layer LSTM model with epco of 100. 
