@@ -494,18 +494,19 @@ for i in [3,5,8,10,15]:
     trainneg.append(trainnegsum)
 
 
-x = [3,5,8,10,15]
+# plot
+x2 = [3,5,8,10,15]
 
-plt.plot(x,pos,'-g',label='test recall for TP')
-plt.plot(x,trainpos,'-y',label='train recall for TP')
-plt.plot(x,neg,'-b',label='test recall for TN')
-plt.plot(x,trainneg,label='train recall for TN')
-plt.plot(x,acc,'-r',label='testing acc')
+plt.plot(x2,pos,'-g',label='test recall for TP')
+plt.plot(x2,trainpos,'-y',label='train recall for TP')
+plt.plot(x2,neg,'-b',label='test recall for TN')
+plt.plot(x2,trainneg,label='train recall for TN')
+plt.plot(x2,acc,'-r',label='testing acc')
 plt.legend(loc='lower right')
 plt.axis([1,16 , 0, 1])
 plt.title('SVM')
 
-plt.xticks(np.arange(min(x), max(x)+1, 1.0))
+plt.xticks(np.arange(min(x2), max(x2)+1, 1.0))
 plt.show()
 
 
@@ -572,17 +573,17 @@ for i in range(1,len(result)):
     trainneg.append(trainnegsum)
 
 # plot
-x = list(range(1,len(result)))
-plt.plot(x,pos,'-g',label='test recall for TP')
-plt.plot(x,trainpos,'-y',label='train recall for TP')
-plt.plot(x,neg,'-b',label='test recall for TN')
-plt.plot(x,trainneg,label='train recall for TN')
-plt.plot(x,acc,'-r',label='testing acc')
+x3 = list(range(1,len(result)))
+plt.plot(x3,pos,'-g',label='test recall for TP')
+plt.plot(x3,trainpos,'-y',label='train recall for TP')
+plt.plot(x3,neg,'-b',label='test recall for TN')
+plt.plot(x3,trainneg,label='train recall for TN')
+plt.plot(x3,acc,'-r',label='testing acc')
 plt.legend(loc='lower right')
 plt.axis([1,10 , 0, 1])
 plt.title('Logistic Regression')
 
-plt.xticks(np.arange(min(x), max(x)+1, 1.0))
+plt.xticks(np.arange(min(x3), max(x3)+1, 1.0))
 value_counts()
 plt.show()
 
