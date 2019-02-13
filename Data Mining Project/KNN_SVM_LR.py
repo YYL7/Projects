@@ -6,12 +6,15 @@ import heapq
 import matplotlib.pyplot as plt
 
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from scipy import stats
 from sklearn.utils import resample
 from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
