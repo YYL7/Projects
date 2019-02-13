@@ -17,23 +17,29 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-def normCol(col):
-    newcolumn = df[col].copy()
-    mean = df[col].mean()
-    sd = df[col].std()
-    newcolumn = (df[col] - mean) / sd
-    return newcolumn
-
 # load the data
 df = pd.read_csv("diabetic_data.csv")
+df.shape
+
+# Data Preprocessing
+
+# drop the entire columns of features where they have too many missing values.
+#“weight” (97% of missing), “payer_code” (52% of missing),“medical_specialty” (53% of missing)  
+#“encounter_id” is not relevant to our project and we only uses the primary diagnosis “diag_1”
 df.drop(['encounter_id','payer_code','weight','diag_2','diag_3','medical_specialty'], axis=1, inplace=True)
+
+# Features that have too many (more than 95%) same value are considered  not informative, so we drop them as well. 
 for i in df.columns:
-	if df[i].value_counts().max() > 91000:
-		df.drop([i], axis=1, inplace=True)
+    if df[i].value_counts().max() > 91000:
+        df.drop([i], axis=1, inplace=True)
+
+# remove the instances with feature “race” == ‘?’ or “gender” == ‘Unknown/ Invalid’ 
+# since they only contain a small part (less than 2%) of the entire data set. 
 a = df.index[df['race'] == '?'].tolist()
 b = df.index[df['gender'] == 'Unknown/Invalid'].tolist()
 removeRow = a + b
 df.drop(removeRow,axis=0, inplace=True)
+
 #remove duplicated patients record
 l = set()
 removeL = []
@@ -46,10 +52,9 @@ df = df.drop(removeL,axis=0)
 df = df.drop('patient_nbr',axis=1)
 
 # Converted to binary values (0 and 1)
-# lable - 'readmitted'
-# assign 1 to 'readmitted' if less than 30; assign 0 to 'readmitted' if else.
-# lable 1 - Readimited within 30 days
-# lable 0 - Not get readmitted within 30 days or get readmitted after 30 days.
+# lable - 'readmitted' 
+# lable 1 - Readimited within 30 days (assign 1 to 'readmitted'if less than 30)
+# lable 0 - Not get readmitted within 30 days or get readmitted after 30 days (assign 0 to 'readmitted' if else.)
 df['readmitted'] = np.where(df['readmitted'] == '<30',1,0)   
 # assign 1 to 'diabetesMed' if Yes
 df['diabetesMed'] = np.where(df['diabetesMed'] == 'Yes',1,0)   
@@ -60,7 +65,7 @@ df['A1Cresult'] = np.where(df['A1Cresult'] == 'None',0,1)
 df['gender'] = np.where(df['gender'] == 'Male',1,0)
 #df['race'] = np.where(df['race'] == 'Caucasian',1,0)
 
-# age: replaced by numerical values from 5 to 95, adding by 10
+# age: for each range, the age will be replaced by mean value of each range 
 df['age'].replace('[0-10)',5,inplace=True)
 df['age'].replace('[10-20)',15,inplace=True)
 df['age'].replace('[20-30)',25,inplace=True)
@@ -72,7 +77,11 @@ df['age'].replace('[70-80)',75,inplace=True)
 df['age'].replace('[80-90)',85,inplace=True)
 df['age'].replace('[90-100)',95,inplace=True)
 
-# admission_type_id: replaced by numerical values from 1 to 8,, adding by 1
+# admission_type_id
+# replaced 'admission_type_id' of 1 with 'ad_type_emergency'
+# replaced 'admission_type_id' of 2 with 'ad_type_urgent'
+# replaced 'admission_type_id' of 3 with 'ad_type_elective'
+# replaced 'admission_type_id' of 4,5,6,7,8 with 'ad_type_other'
 df['admission_type_id'].replace(1,'ad_type_emergency',inplace=True)
 df['admission_type_id'].replace(2,'ad_type_urgent',inplace=True)
 df['admission_type_id'].replace(3,'ad_type_elective',inplace=True)
@@ -81,18 +90,24 @@ df['admission_type_id'].replace(5,'ad_type_other',inplace=True)
 df['admission_type_id'].replace(6,'ad_type_other',inplace=True)
 df['admission_type_id'].replace(7,'ad_type_other',inplace=True)
 df['admission_type_id'].replace(8,'ad_type_other',inplace=True)
+# get four new columns of the four types and then drop the 'admission_type_id'
 one_hot = pd.get_dummies(df['admission_type_id'])
 df = df.join(one_hot)
 df = df.drop('admission_type_id',axis = 1)
 
 # discharge_disposition_id
+# replaced 'discharge_disposition_id' with 'd_d_other' for the range
+# replaced 'discharge_disposition_id' of 1 with 'd_d_home'
+# replaced 'discharge_disposition_id' of 3 with 'd_d_SNF'
+# replaced 'discharge_disposition_id' of 6 with 'd_d_homehealthservice'
 l_ddi = list(range(7,30))
 l_ddi += [2,4,5]
 for i in l_ddi:
-	df['discharge_disposition_id'].replace(i,'d_d_other',inplace=True)
+    df['discharge_disposition_id'].replace(i,'d_d_other',inplace=True)
 df['discharge_disposition_id'].replace(1,'d_d_home',inplace=True)
 df['discharge_disposition_id'].replace(3,'d_d_SNF',inplace=True)
 df['discharge_disposition_id'].replace(6,'d_d_homehealthservice',inplace=True)
+# get four new columns of the four discharge dispositions and then drop the 'discharge_disposition_id'
 one_hot_2 = pd.get_dummies(df['discharge_disposition_id'])
 df = df.join(one_hot_2)
 df = df.drop('discharge_disposition_id',axis = 1)
@@ -124,63 +139,57 @@ one_hot_4 = pd.get_dummies(df['race'])
 df = df.join(one_hot_4)
 df = df.drop('race',axis = 1)
 
-#diag_1:
+## diag_1:
 diag_1 = df['diag_1']
-#Circulatory 390–459, 785
+
+
+# Circulatory 390–459, 785
 C = list(range(390,460)) + [785]
 C = [str(x) for x in C]
-
 for i in C:
     diag_1.replace(i,'Circulatory',inplace = True)
-
-#Respiratory	460–519, 786
+    
+# Respiratory  460–519, 786
 R = list(range(460,520))+[786]
 R = [str(i) for i in R ]
-
 for i in R:
     diag_1.replace(i,'Respiratory', inplace = True)
-
-#Digestive	520–579, 787
-D = list(range(520,580))+[787]
-D = [str(i) for i in D]
     
+# Digestive	520–579, 787
+D = list(range(520,580))+[787]
+D = [str(i) for i in D]   
 for i in D:
     diag_1.replace(i,'Digestive',inplace = True)
-
-#Diabetes	250.xx
+    
+# Diabetes	250.xx
 DB = list(np.arange(250.01,251,0.01))
 DB = [round(i,2) for i in DB]
 DB = [str(i) for i in DB]
 DB += ['250']
-
 for i in DB:
     diag_1.replace(i,'Diabetes',inplace = True)
     
-#Injury	800–999
+# Injury 800–999
 I = list(range(800,1000))
 I = [str(i) for i in I]
-
 for i in I:
     diag_1.replace(i,'Injury',inplace = True)
     
-#Musculoskeletal	710–739
+# Musculoskeletal 710–739
 M = list(range(710,740))
 M = [str(i) for i in M]
-
 for i in M:
     diag_1.replace(i,'Musculoskeletal',inplace = True)
 
-#Genitourinary	580–629, 788
+# Genitourinary 580–629, 788
 G = list(range(580,630))+['788']
 G = [str(i) for i in G]
-
 for i in G:
     diag_1.replace(i,'Genitourinary',inplace = True)
-				
-#Neoplasms 140–239
+
+# Neoplasms 140–239
 N = list(range(140,240))
 N = [str(i) for i in N]
-
 for i in N:
     diag_1.replace(i, 'Neoplasms', inplace= True)
 
@@ -193,6 +202,13 @@ one_hot_5 = pd.get_dummies(df['diag_1'])
 df = df.join(one_hot_5)
 df = df.drop('diag_1',axis = 1)
 
+# Normalization
+def normCol(col):
+    newcolumn = df[col].copy()
+    mean = df[col].mean()
+    sd = df[col].std()
+    newcolumn = (df[col] - mean) / sd
+    return newcolumn
 
 df['age'] = normCol('age')
 df['time_in_hospital'] = normCol('time_in_hospital')
@@ -209,7 +225,7 @@ df = df.reset_index(drop=True)
 print('total number of class 0 instances', df['readmitted'].value_counts()[0])
 print('total number of class 1 instances', df['readmitted'].value_counts()[1])
 
-# PCC
+# PCC - Pearson correlation coefficient
 def PCC(x,y): 
     sum_sq_x = 0
     sum_sq_y = 0 
@@ -249,7 +265,7 @@ def resampletrain(df):
 
 
 #******************************__KNN__*****************************  
-# PCC
+# PCC - Pearson correlation coefficient
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
 abspcc = []
@@ -421,7 +437,7 @@ print('feature_selections:\n',result.iloc[:12,0])
 
 
 #******************************__SVM__*****************************  
-# PCC
+# PCC - Pearson correlation coefficient
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
 abspcc = []
@@ -494,7 +510,7 @@ plt.show()
 
 
 #******************************__Logistic Regression__***************************** 
-# PCC
+# PCC - Pearson correlation coefficient
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
 abspcc = []
