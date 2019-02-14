@@ -94,6 +94,7 @@ df['admission_type_id'].replace(6,'ad_type_other',inplace=True)
 df['admission_type_id'].replace(7,'ad_type_other',inplace=True)
 df['admission_type_id'].replace(8,'ad_type_other',inplace=True)
 # get four new columns of the four types and then drop the 'admission_type_id'
+# use one-hot encoding to convert them to binary features. 
 one_hot = pd.get_dummies(df['admission_type_id'])
 df = df.join(one_hot)
 df = df.drop('admission_type_id',axis = 1)
@@ -111,6 +112,7 @@ df['discharge_disposition_id'].replace(1,'d_d_home',inplace=True)
 df['discharge_disposition_id'].replace(3,'d_d_SNF',inplace=True)
 df['discharge_disposition_id'].replace(6,'d_d_homehealthservice',inplace=True)
 # get four new columns of the four discharge dispositions and then drop the 'discharge_disposition_id'
+# use one-hot encoding to convert them to binary features. 
 one_hot_2 = pd.get_dummies(df['discharge_disposition_id'])
 df = df.join(one_hot_2)
 df = df.drop('discharge_disposition_id',axis = 1)
@@ -121,6 +123,7 @@ for i in l_asi:
 	df['admission_source_id'].replace(i,'a_s_other',inplace=True)
 df['admission_source_id'].replace(1,'a_s_Physician_ref',inplace=True)
 df['admission_source_id'].replace(7,'a_s_emergency_room',inplace=True)
+# use one-hot encoding to convert them to binary features. 
 one_hot_3 = pd.get_dummies(df['admission_source_id'])
 df = df.join(one_hot_3)
 df = df.drop('admission_source_id',axis = 1)
@@ -130,6 +133,7 @@ df['insulin'].replace('No','insulin_No',inplace=True)
 df['insulin'].replace('Up','insulin_Up',inplace=True)
 df['insulin'].replace('Down','insulin_Down',inplace=True)
 df['insulin'].replace('Steady','insulin_Steady',inplace=True)
+# use one-hot encoding to convert them to binary features. 
 one_hot_1 = pd.get_dummies(df['insulin'])
 df = df.join(one_hot_1)
 df = df.drop('insulin',axis = 1)
@@ -138,6 +142,7 @@ df = df.drop('insulin',axis = 1)
 df['race'].replace('Hispanic','race_other',inplace=True)
 df['race'].replace('Asian','race_other',inplace=True)
 df['race'].replace('Other','race_other',inplace=True)
+# use one-hot encoding to convert them to binary features. 
 one_hot_4 = pd.get_dummies(df['race'])
 df = df.join(one_hot_4)
 df = df.drop('race',axis = 1)
@@ -199,12 +204,13 @@ diagSet = set(['Circulatory','Respiratory','Digestive','Diabetes','Injury','Musc
 oindex = df['diag_1'].loc[~df['diag_1'].isin(diagSet)].index.tolist()
 for i in oindex:
     df.at[i,'diag_1'] = 'other_diag'
-
+# use one-hot encoding to convert them to binary features. 
 one_hot_5 = pd.get_dummies(df['diag_1'])
 df = df.join(one_hot_5)
 df = df.drop('diag_1',axis = 1)
 
 # Normalization
+# Normalized each numeric features
 def normCol(col):
     newcolumn = df[col].copy()
     mean = df[col].mean()
