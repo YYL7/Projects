@@ -37,6 +37,8 @@ Lable 0: Not get readmitted within 30 days or get readmitted after 30 days.
 
 # 3. Algorithms
 
+For the following models, all values are treated as numeric value, for all categorical features such as “diag_1” , “admission_type_id” etc. we use one-hot encoding to convert them to binary features.  And we also normalized each numeric features. There are 41 features total for our evaluation, given by the PCC(Pearson correlation coefficient). 
+
 3.1 KNN
 
 3.1.1 Neighbor Selection
