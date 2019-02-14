@@ -266,8 +266,6 @@ def resampletrain(df):
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
     return df_upsampled
 
-
-#******************************__KNN__*****************************  
 # PCC - Pearson correlation coefficient
 label = df['readmitted'].copy()
 train = df.drop('readmitted',axis = 1)
@@ -281,6 +279,8 @@ for i in train.columns:
     result = result.sort_values(['|r|'] , ascending=0)
 print(result)
 
+#******************************__KNN__*****************************  
+# KNN
 pos = []
 neg = []
 acc = []
@@ -440,25 +440,12 @@ print('feature_selections:\n',result.iloc[:12,0])
 
 
 #******************************__SVM__*****************************  
-# PCC - Pearson correlation coefficient
-label = df['readmitted'].copy()
-train = df.drop('readmitted',axis = 1)
-abspcc = []
-features = []
-for i in train.columns:
-    r = PCC(df[i].values,label.values)
-    abspcc.append(abs(r))
-    features.append(i)
-    result = pd.DataFrame({'features':features, '|r|':abspcc})
-    result = result.sort_values(['|r|'] , ascending=0)
-print(result)
-
+# SVM
 pos = []
 neg = []
 acc = []
 trainpos = []
 trainneg = []
-
 for i in [3,5,8,10,15]:
     select = result['features'][0:i].tolist() + ['readmitted']
     DF = df[select]
@@ -514,19 +501,7 @@ plt.show()
 
 
 #******************************__Logistic Regression__***************************** 
-# PCC - Pearson correlation coefficient
-label = df['readmitted'].copy()
-train = df.drop('readmitted',axis = 1)
-abspcc = []
-features = []
-for i in train.columns:
-    r = PCC(df[i].values,label.values)
-    abspcc.append(abs(r))
-    features.append(i)
-    result = pd.DataFrame({'features':features, '|r|':abspcc})
-    result = result.sort_values(['|r|'] , ascending=0)
-print(result)
-
+# Logistic Regression
 pos = []
 neg = []
 acc = []
@@ -587,6 +562,4 @@ plt.axis([1,10 , 0, 1])
 plt.title('Logistic Regression')
 
 plt.xticks(np.arange(min(x3), max(x3)+1, 1.0))
-value_counts()
 plt.show()
-
