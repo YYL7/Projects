@@ -142,9 +142,8 @@ one_hot_4 = pd.get_dummies(df['race'])
 df = df.join(one_hot_4)
 df = df.drop('race',axis = 1)
 
-## diag_1:
+### diag_1:
 diag_1 = df['diag_1']
-
 
 # Circulatory 390–459, 785
 C = list(range(390,460)) + [785]
