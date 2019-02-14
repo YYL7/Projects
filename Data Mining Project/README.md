@@ -43,19 +43,23 @@ Lable 0: Not get readmitted within 30 days or get readmitted after 30 days.
 
 We look for the best k neighbor value from odd numbers in the range of (1, 100). The judgement is based on the recall score of label 1, because the label 1 occupies one tenth of the whole dataset, which means more predicted values are label 0 rather than label 1. The recall score of label 1 could precisely show the effectiveness of this model, compared to that of label 0.  
 
+Through the application of Cross Validation, the model got an average recall score each time. After sorting by the recall scores, our team get the best neighbor equal to 53. 
+
 3.1.2 Features Selection
 
 For KNN model, Our team prefer to choose filter method, which is based on Pearson Correlation Coefficient,  to select features used. We rank the most related features. Due to the incredible amount of data, our team decide to select at most 20 features to run the model. The training data starts from only one feature that is the top one from the rank. Then adding one features every time, the model shows rates including accurate rate, recall score rate with label 1 and 0, precision rate and f1 scores. 
+
+From the plot, we can see that the first twelve elements reached almost best performance with comparably running time. Hence, the KNN model used the first 11 most related features from the whole dataset.
 
 The recall score of label 1 is 0.5427118528745769. The recall score of label 0 is 0.595380947004105. The accuracy is 0.5725093969721744. 
 
 3.2 SVM
 
-The maximum recall for TP(1) is achieved when the model includes top 10 features among the rank. 
+We built our SVM model using top 3, 5, 8, 10, 12, 15 features among the PCC ranks.The maximum recall for TP(1) is achieved with 0.5311 when the model includes top 10 features among the rank. 
 
 3.3 Logistic Regression
 
-We use feature selection based on PCC to rank the features’ correlation to the features and collect the best features to make the future prediction.
+We used feature selection based on PCC to rank the features’ correlation to the features and collect the best features to make the future prediction. And we chose the top 23 features among the PCC ranks. 
 
 The overall precision and recall scores were decent but not great. A 61% recall means that the model was able to recall 61% of all the right answers and a 62% precision shows that the model needed to take many guesses before it can get to the right answers.  
 
