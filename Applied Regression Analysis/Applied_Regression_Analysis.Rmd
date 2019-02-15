@@ -1,5 +1,10 @@
 # Coding with R 
 
+library(rcompanion)
+library(raster)
+library(usdm)
+library(pROC)
+
 # read csv
 x <- read.csv("SpeedDating.csv", header=TRUE)
 
@@ -70,6 +75,7 @@ for(i in c(3,5,11,13,15,17,19,21)){
        xlab=paste(colnames(x)[i+1]),ylab=colnames(x)[i],
        las=T,cex.main=1.2,col=col.vector,pch=pch.vector)
 }
+
 # scatterplots
 plot(x$AgeM,x$AgeF,pch=pch.vector,col= col.vector,
      xlab="AgeF",ylab="AgeM", main="AgeF & AgeM")
@@ -82,6 +88,7 @@ for(i in c(1:8,11:22)){
   print(colnames(x)[i])
   print(summary(x[,i]))
 }  
+
 # change those value with 0 to 1 since many of  the numerical variables are on rating scales from 1 to 10
 x[which(x$PartnerYesM==0),c("PartnerYesM")]<- 1
 x[which(x$FunM==0),c("FunM")]<- 1
@@ -90,8 +97,8 @@ x[which(x$SharedInterestsF==0),c("SharedInterestsF")]<- 1
 
 # 4. Race
 # missing data
-table(x$RaceM)   #2 missing
-table(x$RaceF)   #4 missing keep it to maximize the analysis
+table(x$RaceM)   # 2 missing
+table(x$RaceF)   # 4 missing keep it to maximize the analysis
 which(x$RaceM=='')
 which(x$RaceF=='')
 
@@ -171,7 +178,6 @@ legend("bottomright", bty="n", pch=c(3,6),
 # distributions of the independent variables
 # including LikeM+PartnerYesM+PartnerYesF+AttractiveF+FunF+AmbitiousF
 # all independent variables are normmally distributed
-library(rcompanion)
 par(mfcol=c(3,2))
 for(i in c(3,5:6,12,18,20)){
   plotNormalHistogram(x[,i], main=paste(colnames(x)[i]),
@@ -209,8 +215,6 @@ for(i in c(3,5:6,12,18,20)){
 
 # multicollineary/collineary:
 # all VIF close to 1, so have no collinearity problem.
-library(raster)
-library(usdm)
 vif(x[,c("LikeM","PartnerYesM","PartnerYesF","AttractiveF","FunF","AmbitiousF" )])
 
 
@@ -255,7 +259,6 @@ summary(x.5)
 
 # 8. ROC curve
 # roc curve
-library(pROC)
 roc(response=x.5$second.date[complete.cases(x.5)],las=TRUE,
     predictor=log.5$fitted.values,plot=TRUE, legacy.axes=TRUE, lwd=5,
     main="ROC for Speed Dating", cex.main=1.5, cex.axis=1, cex.lab=1)
