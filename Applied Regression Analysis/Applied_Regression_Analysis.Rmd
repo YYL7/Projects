@@ -1,1 +1,90 @@
-#
+# Coding with R 
+
+# read csv
+x <- read.csv("SpeedDating.csv", header=TRUE)
+
+# 1. Contingency table 
+# change to numeric
+x$PartnerYesM <- as.numeric(x$PartnerYesM)
+x$PartnerYesF <- as.numeric(x$PartnerYesF)
+
+x$AgeM <- as.numeric(x$AgeM)
+x$AgeF <- as.numeric(x$AgeF)
+
+x$RaceM <-as.character(x$RaceM)
+x$RaceF <-as.character(x$RaceF)
+
+x$SincereM <- as.numeric(x$SincereM)
+x$SincereF <- as.numeric(x$SincereF)
+
+x$IntelligentM <- as.numeric(x$IntelligentM)
+x$IntelligentF <- as.numeric(x$IntelligentF)
+
+x$FunM <- as.numeric(x$FunM)
+x$FunF <- as.numeric(x$FunF)
+
+x$AmbitiousM <- as.numeric(x$AmbitiousM)
+x$AmbitiousF <- as.numeric(x$AmbitiousF)
+
+# Contingency table 
+# table(x$DecisionM,x$DecisionF)
+Decision_Made_by_Male <- rep("Yes", times=nrow(x))
+Decision_Made_by_Male[x$DecisionM==0] <- "No"
+Decision_Made_by_Female <- rep("Yes", times=nrow(x))
+Decision_Made_by_Female[x$DecisionF==0] <- "No"
+table(Decision_Made_by_Male,Decision_Made_by_Female)
+
+# percentage of dates ended with both people wanting a second date
+second_date <- sum(x$DecisionM==1 & x$DecisionF==1)/nrow(x)
+paste(round(100*second_date, 2), "%", sep="")
+
+# 2. Scatterplots
+# Values in this column should be 0 if there will be no second date, 1 if there will be a second date
+r <-NULL
+for (i in 1:nrow(x)){
+  if (x$DecisionM[i]==1 & x$DecisionF[i]==1){
+    r[i] <- 1
+    r <-rbind(r,r[i])
+  }
+  else{
+    r[i] <- 0
+    r <-rbind(r,r[i])
+  }
+}
+
+# new column
+r<-r[-277,]
+r<-data.frame(r)
+colnames(r)<-c('second.date')
+x<-data.frame(x,r)
+
+# scatterplot for each numeric value
+par(mfrow=c(3,3))
+pch.vector<-rep(3,times=nrow(x))
+pch.vector[x$second.date==1] <-6
+col.vector <- rep("darkgreen", times=nrow(x))
+col.vector[x$second.date==1] <- "firebrick"
+for(i in c(3,5,11,13,15,17,19,21)){
+  plot(x[,i],x[,i+1],
+       main=paste(colnames(x)[i],colnames(x)[i+1],sep = " & "),
+       xlab=paste(colnames(x)[i+1]),ylab=colnames(x)[i],
+       las=T,cex.main=1.2,col=col.vector,pch=pch.vector)
+}
+# scatterplots
+plot(x$AgeM,x$AgeF,pch=pch.vector,col= col.vector,
+     xlab="AgeF",ylab="AgeM", main="AgeF & AgeM")
+legend("topright", legend=c("second.date==0","second.date==1"), 
+	pch=c(3,6), col=c( "darkgreen","firebrick"), bty="n", cex=1.2, y.intersp=1.2)
+
+# 3. Rating scales and missing values
+# summary of each varibales, missing data
+for(i in c(1:8,11:22)){
+  print(colnames(x)[i])
+  print(summary(x[,i]))
+}  
+# change those value with 0 to 1 since many of  the numerical variables are on rating scales from 1 to 10
+x[which(x$PartnerYesM==0),c("PartnerYesM")]<- 1
+x[which(x$FunM==0),c("FunM")]<- 1
+x[which(x$SharedInterestsM==0),c("SharedInterestsM")]<- 1
+x[which(x$SharedInterestsF==0),c("SharedInterestsF")]<- 1
+
