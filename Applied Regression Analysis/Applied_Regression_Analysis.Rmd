@@ -88,3 +88,206 @@ x[which(x$FunM==0),c("FunM")]<- 1
 x[which(x$SharedInterestsM==0),c("SharedInterestsM")]<- 1
 x[which(x$SharedInterestsF==0),c("SharedInterestsF")]<- 1
 
+# 4. Race
+# missing data
+table(x$RaceM)   #2 missing
+table(x$RaceF)   #4 missing keep it to maximize the analysis
+which(x$RaceM=='')
+which(x$RaceF=='')
+
+
+# mosaicplot with female and male 
+mosaicplot(table(x$RaceM,x$RaceF), las=TRUE,
+           xlab="Female" ,ylab="Male",
+           main="Race",cex.axis=0.8,
+           col=c("darkorange","darkgreen","darkorchid","cadetblue","firebrick"))
+
+# mosaicplot for male 
+par(mfrow=c(2,1))
+mosaicplot(table(x$RaceM,x$second.date), las=TRUE, 
+           main = "Race Mosaic Plot (Male)",
+           xlab = "Race",ylab = "Second Date (Male)",
+           col=c("darkgreen","cadetblue"))
+
+# mosaicplot for female
+mosaicplot(table(x$RaceF,x$second.date), las=TRUE, 
+           main = "Race Mosaic Plot (Female)",
+           xlab = "Race",ylab = "Second Date (Female)",
+           col=c("darkgreen","cadetblue"))
+
+# 5. Logistic regression
+# 5.1 Logistic regression
+# logistic regression model including all numerical variables
+x.1<-x[,-c(1,2)]  #drop the decision variable
+log.1 <- glm(second.date ~ . , family="binomial",  data=x.1)
+summary(log.1)
+
+# droping race
+# based on previous mosaic plot, we know that race doesn't affet much.
+x.2<- x.1[,-c(7,8)]
+log.2 <- glm(second.date ~ ., family="binomial",  data=x.2)
+# summary(log.2)
+
+# drop those p value more than 0.5, which is high
+# so, drop LikeF,AttractiveM,SincereM,SincereF,IntelligentM,IntelligentF and SharedInterestsM, and SharedInterestsF.
+x.3<-x.2[,-c(2,7,9:12,17:18)]
+log.3 <- glm(second.date ~ ., family="binomial",  data=x.3)
+# summary(log.3)
+
+# drop AgeF,FunM, AmbitiousM, 
+x.4<-x.3[,-c(5,7,9)]
+log.4 <- glm(second.date ~ ., family="binomial",  data=x.4)
+# summary(log.4)
+
+# drop AgeM
+# including LikeM+PartnerYesM+PartnerYesF+AttractiveF+FunF+AmbitiousF
+x.5<-x.4[,-4]
+log.5 <- glm(second.date ~ ., family="binomial",  data=x.5)
+summary(log.5)
+# choose log.5 for final model.
+
+# 5.2 Checking assumptions
+# chekcing linearity: 
+# there is no two variables are highly correlated  
+# correlation
+round(cor(x[,c("second.date","LikeM","PartnerYesM","PartnerYesF",
+               "AttractiveF","FunF","AmbitiousF")],
+               use="complete.obs"),digits=3)
+# scatterplot matrix
+pch.vector<-rep(3,times=nrow(x.5))
+pch.vector[x.5$second.date==0] <-6
+# by different color for each kind of type
+col.vector <- rep("darkgreen", times=nrow(x.5))
+col.vector[x.5$second.date==0] <- "firebrick"
+# scatterplot matrix
+pairs(x.5[,c("LikeM","PartnerYesM","PartnerYesF",
+               "AttractiveF","FunF","AmbitiousF")],
+      las=TRUE,col=col.vector,pch=pch.vector)
+legend("bottomright", bty="n", pch=c(3,6),
+       legend=c("sec_date","no_sec_date"),
+       col=c("darkgreen", "firebrick"), y.intersp=0.5)
+
+
+# distributions of the independent variables
+# including LikeM+PartnerYesM+PartnerYesF+AttractiveF+FunF+AmbitiousF
+# all independent variables are normmally distributed
+library(rcompanion)
+par(mfcol=c(3,2))
+for(i in c(3,5:6,12,18,20)){
+  plotNormalHistogram(x[,i], main=paste(colnames(x)[i]),
+       xlab=paste(colnames(x)[i]),
+       las=T, cex.main=1,pch=19,col='firebrick')
+}
+
+
+# outlier(by boxplot): 
+# there is few outliers for the set of independant variables
+par(mfcol=c(3,2))
+for(i in c(3,5:6,12,18,20)){ 
+  boxplot(x[,i], main=paste(colnames(x)[i]),
+       xlab=paste(colnames(x)[i]),
+       las=T, cex.main=1,pch=19,col='firebrick')
+}
+
+
+# cook distance: 
+# there is no specific high distance show up.
+par(mfcol=c(2,6))
+for(i in c(3,5:6,12,18,20)){ 
+  plot(x[,i][x$second.date==0], type="h",
+       cooks.distance(log.5)[x$second.date == 0],
+       main=paste(colnames(x)[i],"(No 2nd date)",sep=""),
+       xlab=paste(colnames(x)[i]),ylab="Cook's Distance",
+       las=T, cex.main=0.85,pch=19,col='firebrick')
+  plot(x[,i][x$second.date==1], type="h",
+       cooks.distance(log.5)[x$second.date == 1],
+       main=paste(colnames(x)[i],"(with 2nd date)",sep=""),
+       xlab=paste(colnames(x)[i]),ylab="Cook's Distance",
+       las=T, cex.main=0.85,pch=19,col='firebrick')
+}
+
+
+# multicollineary/collineary:
+# all VIF close to 1, so have no collinearity problem.
+library(raster)
+library(usdm)
+vif(x[,c("LikeM","PartnerYesM","PartnerYesF","AttractiveF","FunF","AmbitiousF" )])
+
+
+# chekcing assumption:
+par(mfrow=c(2,2))
+plot(log.5)
+
+# 5.3 Evaluation(Hypothesis):
+# 5.3.1 Log-Likelihood Test for Overall Model
+# test statistic (G)
+summary(log.5)$null.deviance - summary(log.5)$deviance
+summary(log.5)$df.null - summary(log.5)$df.residual
+
+# p-value calculation
+pchisq(summary(log.5)$null.deviance - summary(log.5)$deviance, 
+       df=summary(log.5)$df.null - summary(log.5)$df.residual,
+       lower.tail=FALSE)
+# the p-value is small enough to reject thr null hypothesis.
+
+# 5.3.2 Z-test
+# z-test for slope
+summary(log.5)
+
+# 6. Contingency table after the model
+x.6<- x[complete.cases(x[,c("LikeM","PartnerYesM","PartnerYesF","AttractiveF","FunF","AmbitiousF")]),]
+
+Decision_Made_by_Male <- rep("Yes", times=nrow(x.6))
+Decision_Made_by_Male[x.6$DecisionM==0] <- "No"
+Decision_Made_by_Female <- rep("Yes", times=nrow(x.6))
+Decision_Made_by_Female[x.6$DecisionF==0] <- "No"
+table(Decision_Made_by_Male,Decision_Made_by_Female)
+
+# percentage of dates ended with both people wanting a second date
+second_date <- sum(x.6$DecisionM==1 & x.6$DecisionF==1)/nrow(x.6)
+paste( round(100*second_date, 2), "%", sep="")
+
+# 7. Interpret the slopes
+# summary of the model
+summary(log.5)
+# the range of the independent variable is from 1 to 10
+summary(x.5)
+
+# 8. ROC curve
+# roc curve
+library(pROC)
+roc(response=x.5$second.date[complete.cases(x.5)],las=TRUE,
+    predictor=log.5$fitted.values,plot=TRUE, legacy.axes=TRUE, lwd=5,
+    main="ROC for Speed Dating", cex.main=1.5, cex.axis=1, cex.lab=1)
+legend("bottomright",legend=paste("AUC=", round(auc(x.5$second.date[complete.cases(x.5)], 
+predictor=log.5$fitted.values), digits=3), sep=" "),bty="n", cex=1)
+
+# AUC
+auc(x.5$second.date[complete.cases(x.5)], predictor=log.5$fitted.values)
+
+# set ROC curve to roc.info
+roc.info <- roc(x.5$second.date[complete.cases(x.5)], predictor=log.5$fitted.values)
+
+# threshold = 0.5
+coords(roc.info, x=0.5, input="threshold", ret=c("threshold", "sensitivity", "specificity"))
+
+# sensitivity and specificity for the threshold with highest sum of  sensitivity and specificity
+coords(roc.info, x="best", ret=c("threshold", "sensitivity", "specificity"))
+
+
+x.7 <- data.frame(x.6, "fitted.values"=round(log.5$fitted.values, digits=3))
+x.7 <- x.7[,23:24]
+
+actual.sec.date <- rep("sec.date", times=nrow(x.7))
+actual.sec.date[x.7$second.date == 0] <- "no sec.date"
+
+# threshold=0.5
+classify.1 <- rep("sec.date", times=nrow(x.7))
+classify.1[x.7$fitted.values < 0.5] <- "no sec.date"
+
+# threshold=best
+classify.2 <- rep("sec.date", times=nrow(x.7))
+classify.2[x.7$fitted.values < coords(roc.info, x="best", ret="threshold")] <- "no sec.date"
+
+table(classify.1, actual.sec.date)
+table(classify.2, actual.sec.date)
