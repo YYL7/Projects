@@ -29,11 +29,11 @@ For “diag_1”, we sort the column to nine different groups includes: Circulat
 
 After performing the above operation, we were left with 69,667 instances with 21 features for further analysis. 
 
-Lables: Total number of lable 0 instance: 63,500; Total number of lable 1 instance: 6,167.
+Lables: readmitted (0/1)
 
-Lable 1: Readimited within 30 days.
+Lable 1: Readimited within 30 days. Total number of lable 1 instance is 6,167.
 
-Lable 0: Not get readmitted within 30 days or get readmitted after 30 days.
+Lable 0: Not get readmitted within 30 days or get readmitted after 30 days. Total number of lable 0 instance is 63,500.
 
 # 3. Algorithms
 
