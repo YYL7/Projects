@@ -53,13 +53,15 @@ There are five race categoires:Asian, Black, Caucasian, Latino and Other. Both g
 
 4.1 Logistic Regression Model
 
-Firstly, I built logistic regression model with all numerical variables. Then I dropped variable of race, based on previous mosaic plot, we know that race doesn't affet much. After that, I dropped those p value more than 0.5, which is high, including variables of LikeF,AttractiveM,SincereM,SincereF,IntelligentM,IntelligentF and SharedInterestsM, and SharedInterestsF. Lastly, I dropped AgeF,FunM  and AmbitiousM for the same reason of high p value. So our final model was built by the remaining variables, including LikeM ,PartnerYesM,PartnerYesF,AttractiveF,FunF, AmbitiousF
+Firstly, I built logistic regression model with all numerical variables. Then I dropped variable of race, based on previous mosaic plot, we know that race doesn't affet much. After that, I dropped those p value more than 0.5, which is high, including variables of LikeF,AttractiveM,SincereM,SincereF,IntelligentM,IntelligentF and SharedInterestsM, and SharedInterestsF. Lastly, I dropped AgeF,FunM  and AmbitiousM for the same reason of high p value. So our final model was built by the remaining variables, including LikeM ,PartnerYesM,PartnerYesF,AttractiveF,FunF and AmbitiousF.
 
 The final model:
 
 P(have a second date|LikeM ,PartnerYesM,PartnerYesF,AttractiveF,FunF, AmbitiousF)=
   e^(-10.5161+0.4940(LikeM)+0.3416(PartnerYesM)+0.2693(PartnerYesF)+0.3486(FunF)- 0.3047(AmbitiousF))/
  (1+e^(-10.5161+0.4940(LikeM)+0.3416(PartnerYesM)+0.2693(PartnerYesF)+0.3486(FunF)- 0.3047(AmbitiousF)))
+
+
 
 4.2 Log-Likelihood Test for Overall Model
 
@@ -69,6 +71,8 @@ H1: at least one beta != 0
 
 The p-value is 2.764745e-18, which is small enough to reject the null hypothesis.
 
+
+
 4.3 Z-test
 
 H0: the beta slope(variable) = 0;
@@ -76,6 +80,8 @@ H0: the beta slope(variable) = 0;
 Hα: the beta slope(variable) != 0
 
 All the p-value is small enough to reject the null hypothesis, and these six variables are statistically significant.
+
+
 
 4.4 AUC - ROC curve
 
